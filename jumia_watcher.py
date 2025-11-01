@@ -1,4 +1,3 @@
-# jumia_watcher.py  (replace your current file with this)
 import time
 import re
 import requests
@@ -90,11 +89,7 @@ def parse_search_results(html):
     return results
 
 def dynamic_tolerance(price):
-    """
-    Dynamic tolerance logic adjusted for treasure-hunt prices.
-    Low-value treasures need tighter price matching,
-    while high-value ones get wider tolerance.
-    """
+    
     if price < 5000:
         return max(200, int(price * 0.10))     # for treasures below ₦5k
     elif price < 20000:
@@ -106,15 +101,12 @@ def dynamic_tolerance(price):
 
 
 def name_similarity(a, b):
-    # fuzzy similarity ratio 0..1
     return difflib.SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
 def likely_match(title, target_name, sim_threshold=0.55):
-    # require fuzzy similarity above threshold AND a couple keywords overlap
     sim = name_similarity(title, target_name)
     if sim < sim_threshold:
         return False
-    # quick keyword overlap: ignore too-short tokens
     def toks(s):
         return [t for t in re.split(r"[\s\-/,:\"']+", s.lower()) if len(t) > 2]
     tset = set(toks(target_name))
